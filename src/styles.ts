@@ -9,10 +9,10 @@ interface themesI {
   };
 }
 
-const btnStyle = 'px-4 py-2 m-4 rounded-sm font-bold text-base font-mono';
+const btnStyle = 'p-4 m-3 rounded-sm font-bold text-base font-mono';
 const anchorStyle = 'underline hovered:no-underline';
 const userTextStyle =
-  'items-center justify-center border-solid border-2 rounded-md text-lg w-full max-w-3xl resize-none my-4 p-4';
+  'items-center justify-center text-lg w-full max-w-3xl resize-nonemy-4 p-4';
 const dropdownStyle =
   'text-base font-mono cursor-pointer children:py-2 children:px-4 lg:children:py-0 lg:children:px-1 text-right';
 
@@ -43,7 +43,7 @@ export const themes: themesI = {
   },
 };
 
-// This runs in index.html and after setting a theme
+// This runs in index.html on open and in ThemeContext.tsx after setting a theme
 export const defineTheme = (t: string) => {
   document.documentElement.setAttribute('data-theme', t);
   localStorage.setItem('theme', t);

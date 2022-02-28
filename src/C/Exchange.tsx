@@ -17,7 +17,9 @@ export default function Exchange(props: exchangePropsI) {
   const { currentPath, userId, setExchangeArr, setPageWasDeleted } = props;
   const { theme } = useThemeContext();
   const [currentPage, setCurrentPage] = React.useState<exchangeEntry>();
-  const [isCreator, setIsCreator] = React.useState<boolean>(false);
+  const [isCreator, setIsCreator] = React.useState<boolean>();
+  const [textElementType, setTextElementType] =
+    React.useState<string>('default');
   const [creatorText, setCreatorText] = React.useState<string>('');
   const [guestText, setGuestText] = React.useState<string>('');
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -30,47 +32,38 @@ export default function Exchange(props: exchangePropsI) {
         ...JSON.parse(data).filter(
           (a: exchangeEntry) => a.path === currentPath
         )[0],
-        // Update date so that entry doesn't get deleted on backend because of age
+        // Update date so that active entry doesn't get deleted on backend because of age
         date: Date.now(),
       });
       setIsLoading(false);
     });
   }, []);
 
-  const setTextAreaDefaultHeight = () => {
-    const el = document.querySelector('textarea') as HTMLTextAreaElement;
-    const style = el.style;
-    style.setProperty('height', '60px');
-  };
-  React.useEffect(() => {
-    const textAreaFocus = () => {
-      const el = document.querySelector('textarea') as HTMLTextAreaElement;
-      const valueLength = el.value.length * 2;
-      el.selectionStart = valueLength;
-    };
-    if (!isLoading) {
-      if (isCreator && !creatorText) {
-        setTextAreaDefaultHeight();
-      } else if (!guestText) {
-        setTextAreaDefaultHeight();
-      }
-      setAttr();
-      textAreaFocus();
+  const setTextAreaHeight = () => {
+    const el = document.querySelector('textarea');
+    if (el) {
+      el.style.setProperty('height', 'auto');
+      el.style.setProperty('height', el.scrollHeight + 'px');
     }
-  }, [isLoading]);
+  }
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (isCreator) {
-      setCreatorText(e.target.value);
-    } else {
-      setGuestText(e.target.value);
+  React.useEffect(() => {
+    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+    const setSelectionStart = () => {
+      const valueLength = textarea.value.length * 2;
+      textarea.selectionStart = valueLength;
+    };
+    if (!isLoading && textarea) {
+      setTextAreaHeight();
+      if (textarea.value.length === 0) {
+        textarea.style.setProperty('height', '60px');
+      }
+      setSelectionStart();
     }
-    const el = e.target as HTMLTextAreaElement;
-    el.style.height = el.scrollHeight + 'px';
-    if (e.target.value.length === 0) {
-      setTextAreaDefaultHeight();
-    }
-  };
+  }, [isLoading, textElementType]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
+    isCreator ? setCreatorText(e.target.value) : setGuestText(e.target.value);
 
   const handleSend = () => {
     getData().then(({ data }) => {
@@ -146,35 +139,32 @@ export default function Exchange(props: exchangePropsI) {
     }
   }, [currentPage]);
 
-  function setAttr() {
-    const el = document.querySelector('textarea') as HTMLTextAreaElement;
-    if (el) {
-      el.setAttribute(
-        'style',
-        'height:' + el.scrollHeight + 'px;overflow-y:hidden;'
-      );
-    }
-  }
-
-  // Resize textarea on window resize
+  // Resize textarea on input or window resize
   React.useEffect(() => {
-    window.addEventListener('resize', setAttr);
+    const textarea = document.querySelector('textarea');
+    if (textarea) {
+      textarea.addEventListener('input', setTextAreaHeight);
+      window.addEventListener('resize', setTextAreaHeight);
+    }
     return () => {
-      window.removeEventListener('resize', setAttr);
+      if (textarea) {
+        textarea.removeEventListener('input', setTextAreaHeight);
+        window.removeEventListener('resize', setTextAreaHeight);
+      }
     };
-  }, [currentPage]);
+  }, [isLoading]);
 
-  const [textDisplay, setTextDisplay] = React.useState('hidden');
-
-  const handleDisplayText = () =>
-    textDisplay === 'hidden' ? setTextDisplay('') : setTextDisplay('hidden');
+  const handleTextElementType = () =>
+    textElementType === 'default'
+      ? setTextElementType('other')
+      : setTextElementType('default');
 
   return (
-    <div className='m-2'>
+    <div>
       <div
         className={`${
           theme && theme.system
-        } flex flex-row justify-between mb-12`}
+        } flex flex-row justify-between m-2 mb-12`}
       >
         <Link to='/'>Return to home page</Link>
         <p>{currentPath}</p>
@@ -184,57 +174,69 @@ export default function Exchange(props: exchangePropsI) {
           <p className={theme && theme.system}>Getting data...</p>
         ) : document.cookie ? (
           <>
-            <div className='flex flex-col items-center justify-center mb-2 w-full'>
-              <h1 className='curs'>Edit your text</h1>
-              <textarea
-                className={`${
-                  theme && theme.userText
-                } shadow-inner shadow-black/25 placeholder:text-base placeholder:font-mono overflow-y-hidden`}
-                placeholder='Enter text here...'
-                value={isCreator ? creatorText : guestText}
-                onChange={handleChange}
-                autoFocus
-              />
-              <div className='flex flex-row flex-wrap justify-center'>
-                <button className={theme && theme.btn} onClick={handleSend}>
-                  <p>Send</p>
-                  <p className='text-xs'>(128kb max)</p>
-                </button>
-                {isCreator && (
-                  <Delete {...props} setPageWasDeleted={setPageWasDeleted} />
-                )}
+            {textElementType === 'default' ? (
+              <div className='flex flex-col items-center justify-center mb-2 w-full'>
+                <h1 className='curs'>Edit your text</h1>
+                <textarea
+                  className={`${
+                    theme && theme.userText
+                  } shadow-inner shadow-black/25 placeholder:text-base placeholder:font-mono overflow-y-hidden resize-none`}
+                  placeholder='Enter text here...'
+                  value={isCreator ? creatorText : guestText}
+                  onChange={handleChange}
+                  autoFocus
+                />
               </div>
-            </div>
-            <div className='flex flex-col items-center justify-center w-full'>
-              <h1 className='curs'>
-                {isCreator ? "Guest's text" : "Creator's text"}
-              </h1>
-              <div
-                className={`${
-                  theme && theme.userText
-                } ${textDisplay} font-sans whitespace-pre-line break-words`}
-              >
-                {isCreator ? (
-                  !guestText ? (
+            ) : (
+              <div className='flex flex-col items-center justify-center w-full'>
+                <h1 className='curs'>
+                  {isCreator ? 'Guest\'s text' : 'Creator\'s text'}
+                </h1>
+                <div
+                  className={`${
+                    theme && theme.userText
+                  } ${textElementType} font-sans whitespace-pre-line break-words`}
+                >
+                  {isCreator ? (
+                    !guestText ? (
+                      <p className={theme && theme.system}>
+                        Waiting for guest to send data...
+                      </p>
+                    ) : (
+                      guestText
+                    )
+                  ) : !creatorText ? (
                     <p className={theme && theme.system}>
-                      Waiting for guest to send data...
+                      Waiting for creator to send data...
                     </p>
                   ) : (
-                    guestText
-                  )
-                ) : !creatorText ? (
-                  <p className={theme && theme.system}>
-                    Waiting for creator to send data...
-                  </p>
-                ) : (
-                  creatorText
-                )}
+                    creatorText
+                  )}
+                </div>
               </div>
+            )}
+            <div className='flex flex-row flex-wrap justify-center'>
+              {textElementType === 'default' && (
+                <button
+                  className={`${theme && theme.btn} flex flex-row items-center`}
+                  onClick={handleSend}
+                >
+                  <p>Send</p>&nbsp;
+                  <p className='text-xs'>(128kb max)</p>
+                </button>
+              )}
+              {isCreator && (
+                <Delete {...props} setPageWasDeleted={setPageWasDeleted} />
+              )}
               <button
                 className={theme && theme.btn}
-                onClick={handleDisplayText}
+                onClick={handleTextElementType}
               >
-                {textDisplay === 'hidden' ? 'Show' : 'Hide'}
+                {textElementType === 'default'
+                  ? isCreator
+                    ? 'Show guest\'s text'
+                    : 'Show creator\'s text'
+                  : 'Show your text'}
               </button>
             </div>
           </>

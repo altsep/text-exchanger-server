@@ -24,7 +24,7 @@ export default function Desc() {
       <p className='curs indent-2'>
         This app allows to exchange fragments of text. Press
         &quot;Generate&quot; to generate a link that could be then sent to
-        another person. Paste the text you wanted to share. The other person
+        another person. Paste the text you wanted to share and press send. The other person
         will have an option to share their piece of text as well. On press you
         will be redirected, link will be copied to clipboard.
       </p>

@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
+// import path from 'path'
 
 export default defineConfig({
   // base: '/',
@@ -8,12 +9,14 @@ export default defineConfig({
   build: {
     outDir: '../../server/dist',
     // manifest: true,
+    // ssrManifest: true,
+    // ssr: true,
     // rollupOptions: {
     //   input: {
     //     index: path.resolve(__dirname, 'index.html'),
     //   },
     //   output: {
-    //     dir: '../check/dist',
+    //     dir: '../../../share-text-server/dist',
     //   },
     // },
   },

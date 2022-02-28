@@ -29,20 +29,6 @@ export default function App() {
   const [userId, setUserId] = React.useState<string>('');
 
   React.useEffect(() => {
-    // Determine if user has an id. If not, assign one
-    const id = document.cookie.split('=')[1];
-    if (id) {
-      setUserId(id);
-    } else {
-      import('./F/gen-str')
-        .then(({ genAlphanumStr }) => {
-          const userToken = 'user-id=' + genAlphanumStr(32);
-          const attr =
-            ';domain=localhost;max-age=2592000;secure;samesite=strict';
-          document.cookie = userToken + attr;
-        })
-        .catch((err) => console.log(err));
-    }
     // Get pages data and let the app know it was processed
     getData().then(({ data }) => {
       data && setExchangeArr(JSON.parse(data));
@@ -51,6 +37,20 @@ export default function App() {
   }, []);
 
   React.useEffect(() => {
+    // Determine if user has an id. If not, assign one in the form of a cookie
+    const id = document.cookie.split('=')[1];
+    if (id) {
+      setUserId(id);
+    } else {
+      import('./F/gen-str')
+        .then(({ genAlphanumStr }) => {
+          const userToken = 'user-id=' + genAlphanumStr(32);
+          const attr =
+            ';max-age=2592000;secure;samesite=strict';
+          document.cookie = userToken + attr;
+        })
+        .catch((err) => console.log(err));
+    }
     // Send new data to server on every update of the data array
     if (isAppLoaded) {
       setData(exchangeArr);
