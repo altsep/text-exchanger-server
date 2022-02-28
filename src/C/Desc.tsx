@@ -26,7 +26,7 @@ export default function Desc() {
         &quot;Generate&quot; to generate a link that could be then sent to
         another person. Paste the text you wanted to share and press send. The other person
         will have an option to share their piece of text as well. On press you
-        will be redirected, link will be copied to clipboard.
+        will be redirected, link will be copied to clipboard. Page will be removed after one week of inactivity.
       </p>
       <p className='curs'>Have fun!</p>
     </animated.div>
