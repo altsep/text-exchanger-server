@@ -1,0 +1,36 @@
+{
+  "name": "share-text-server",
+  "version": "0.1.0",
+  "description": "",
+  "private": true,
+  "license": "MIT",
+  "author": "Alexei Arushanov <coamnv@gmail.com> (https://altsep.vercel.app)",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "nodemon .",
+    "build": "cd ../client && yarn build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "14.x"
+  },
+  "keywords": [],
+  "dependencies": {
+    "express": "^4.17.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      ".git",
+      "node_modules/**/node_modules"
+    ],
+    "watch": [
+      "./*"
+    ],
+    "delay": 0,
+    "ext": "js,json"
+  }
+}
