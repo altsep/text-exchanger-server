@@ -53,7 +53,8 @@ function readdirSync() {
   filesList = fs.readdirSync(filesDir);
 }
 
-const msInADay = 86400000;
+const msInAWeek = 604800000;
+// const msInADay = 86400000;
 const msinAMinute = 60000;
 
 function clearOutdatedEntries() {
@@ -63,8 +64,8 @@ function clearOutdatedEntries() {
     if (data) {
       const parsedData = JSON.parse(data);
       const currentDate = Date.now();
-      const newData = parsedData.filter((a) => currentDate - a.date < msInADay);
-      const oldData = parsedData.filter((a) => currentDate - a.date > msInADay);
+      const newData = parsedData.filter((a) => currentDate - a.date < msInAWeek);
+      const oldData = parsedData.filter((a) => currentDate - a.date > msInAWeek);
       if (oldData.length > 0) {
         fs.writeFile(
           path.join(__dirname, filesDir, file),
