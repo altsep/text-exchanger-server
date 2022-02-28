@@ -41,26 +41,6 @@ export default function Exchange(props: exchangePropsI) {
     });
   }, []);
 
-  const setTextAreaHeight = () => {
-    const el = document.querySelector('textarea');
-    if (el) {
-      el.style.setProperty('height', 'auto');
-      el.style.setProperty('height', el.scrollHeight + 'px');
-    }
-  };
-
-  React.useEffect(() => {
-    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
-    if (!isLoading && textarea) {
-      setTextAreaHeight();
-      if (textarea.value.length === 0) {
-        textarea.style.setProperty('height', '60px');
-      }
-      const valueLength = textarea.value.length * 2;
-      textarea.selectionStart = valueLength;
-    }
-  }, [isLoading, textElementType]);
-
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
     isCreator ? setCreatorText(e.target.value) : setGuestText(e.target.value);
 
@@ -138,27 +118,13 @@ export default function Exchange(props: exchangePropsI) {
     }
   }, [currentPage]);
 
-  // Resize textarea on input or window resize
-  React.useEffect(() => {
-    const textarea = document.querySelector('textarea');
-    if (textarea) {
-      textarea.addEventListener('input', setTextAreaHeight);
-      window.addEventListener('resize', setTextAreaHeight);
-    }
-    return () => {
-      if (textarea) {
-        textarea.removeEventListener('input', setTextAreaHeight);
-        window.removeEventListener('resize', setTextAreaHeight);
-      }
-    };
-  }, [isLoading]);
-
   const handleTextElementType = () =>
     textElementType === 'default'
       ? setTextElementType('other')
       : setTextElementType('default');
 
   const userTextProps = {
+    isLoading,
     isCreator,
     textElementType,
     creatorText,

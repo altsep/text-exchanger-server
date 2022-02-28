@@ -4,7 +4,7 @@ import { userTextPropsI } from './TextDefault';
 export default function TextOther(props: userTextPropsI) {
   const { isCreator, textElementType, creatorText, guestText, theme } = props;
   return (
-    <div className='flex flex-col items-center justify-center w-ful'>
+    <div className='flex flex-col items-center justify-center w-full'>
       <h1 className='curs'>{isCreator ? 'Guest\'s text' : 'Creator\'s text'}</h1>
       <div
         className={`${
