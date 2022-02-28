@@ -12,7 +12,7 @@ interface themesI {
 const btnStyle = 'p-4 m-3 rounded-sm font-bold text-base font-mono';
 const anchorStyle = 'underline hovered:no-underline';
 const userTextStyle =
-  'items-center justify-center text-lg w-full max-w-3xl resize-nonemy-4 p-4';
+  'items-center justify-center text-lg w-full max-w-5xl resize-none my-4 p-4';
 const dropdownStyle =
   'text-base font-mono cursor-pointer children:py-2 children:px-4 lg:children:py-0 lg:children:px-1 text-right';
 

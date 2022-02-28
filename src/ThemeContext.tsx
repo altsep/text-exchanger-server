@@ -10,13 +10,15 @@ export interface themeI {
   dropdown: string;
 }
 
+export type themeT = themeI | undefined
+
 export interface valueT {
   theme: themeI | undefined;
   setTheme: React.Dispatch<React.SetStateAction<themeI | undefined>>;
 }
 
 function ThemeProvider(props: { children: JSX.Element | JSX.Element[] }) {
-  const [theme, setTheme] = React.useState<themeI | undefined>();
+  const [theme, setTheme] = React.useState<themeT>();
   React.useEffect(() => {
     const storageItem: string | null = localStorage.getItem('theme');
     if (storageItem) {

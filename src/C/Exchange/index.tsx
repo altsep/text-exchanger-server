@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { exchangeEntry, exchangeT } from '../App';
-import { getData } from '../F/requests';
-import { Delete } from '.';
-import { useThemeContext } from '../ThemeContext';
+import { exchangeEntry, exchangeT } from '../../App';
+import { getData } from '../../F/requests';
+import { Delete } from '..';
+import { useThemeContext } from '../../ThemeContext';
+import TextDefault from './TextDefault';
+import TextOther from './TextOther';
 
 interface exchangePropsI {
   currentPath: string;
@@ -17,7 +19,7 @@ export default function Exchange(props: exchangePropsI) {
   const { currentPath, userId, setExchangeArr, setPageWasDeleted } = props;
   const { theme } = useThemeContext();
   const [currentPage, setCurrentPage] = React.useState<exchangeEntry>();
-  const [isCreator, setIsCreator] = React.useState<boolean>();
+  const [isCreator, setIsCreator] = React.useState<boolean>(true);
   const [textElementType, setTextElementType] =
     React.useState<string>('default');
   const [creatorText, setCreatorText] = React.useState<string>('');
@@ -45,20 +47,17 @@ export default function Exchange(props: exchangePropsI) {
       el.style.setProperty('height', 'auto');
       el.style.setProperty('height', el.scrollHeight + 'px');
     }
-  }
+  };
 
   React.useEffect(() => {
     const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
-    const setSelectionStart = () => {
-      const valueLength = textarea.value.length * 2;
-      textarea.selectionStart = valueLength;
-    };
     if (!isLoading && textarea) {
       setTextAreaHeight();
       if (textarea.value.length === 0) {
         textarea.style.setProperty('height', '60px');
       }
-      setSelectionStart();
+      const valueLength = textarea.value.length * 2;
+      textarea.selectionStart = valueLength;
     }
   }, [isLoading, textElementType]);
 
@@ -159,8 +158,17 @@ export default function Exchange(props: exchangePropsI) {
       ? setTextElementType('other')
       : setTextElementType('default');
 
+  const userTextProps = {
+    isCreator,
+    textElementType,
+    creatorText,
+    guestText,
+    handleChange,
+    theme,
+  };
+
   return (
-    <div>
+    <>
       <div
         className={`${
           theme && theme.system
@@ -175,45 +183,9 @@ export default function Exchange(props: exchangePropsI) {
         ) : document.cookie ? (
           <>
             {textElementType === 'default' ? (
-              <div className='flex flex-col items-center justify-center mb-2 w-full'>
-                <h1 className='curs'>Edit your text</h1>
-                <textarea
-                  className={`${
-                    theme && theme.userText
-                  } shadow-inner shadow-black/25 placeholder:text-base placeholder:font-mono overflow-y-hidden resize-none`}
-                  placeholder='Enter text here...'
-                  value={isCreator ? creatorText : guestText}
-                  onChange={handleChange}
-                  autoFocus
-                />
-              </div>
+              <TextDefault {...userTextProps} />
             ) : (
-              <div className='flex flex-col items-center justify-center w-full'>
-                <h1 className='curs'>
-                  {isCreator ? 'Guest\'s text' : 'Creator\'s text'}
-                </h1>
-                <div
-                  className={`${
-                    theme && theme.userText
-                  } ${textElementType} font-sans whitespace-pre-line break-words`}
-                >
-                  {isCreator ? (
-                    !guestText ? (
-                      <p className={theme && theme.system}>
-                        Waiting for guest to send data...
-                      </p>
-                    ) : (
-                      guestText
-                    )
-                  ) : !creatorText ? (
-                    <p className={theme && theme.system}>
-                      Waiting for creator to send data...
-                    </p>
-                  ) : (
-                    creatorText
-                  )}
-                </div>
-              </div>
+              <TextOther {...userTextProps} />
             )}
             <div className='flex flex-row flex-wrap justify-center'>
               {textElementType === 'default' && (
@@ -244,6 +216,6 @@ export default function Exchange(props: exchangePropsI) {
           <p>Can&apos;t identify user! Please enable cookies for this site.</p>
         )}
       </div>
-    </div>
+    </>
   );
 }
