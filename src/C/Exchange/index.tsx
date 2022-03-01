@@ -24,10 +24,9 @@ export default function Exchange(props: exchangePropsI) {
     React.useState<string>('default');
   const [creatorText, setCreatorText] = React.useState<string>('');
   const [guestText, setGuestText] = React.useState<string>('');
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
-    setIsLoading(true);
     setPageWasDeleted(false);
     getData().then(({ data }) => {
       setCurrentPage({
