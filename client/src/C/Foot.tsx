@@ -12,7 +12,7 @@ export default function Foot() {
       Reach me&nbsp;
       <a
         className='foot-link'
-        href='https://altsep.vercel.app/#contacts'
+        href='https://altsep.vercel.app/'
         target='_blank'
         rel='noreferrer'
       >
