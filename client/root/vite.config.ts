@@ -7,7 +7,7 @@ export default defineConfig({
   // base: '/',
   // root: '/',
   build: {
-    outDir: '../../server/dist',
+    outDir: '../../dist',
     // manifest: true,
     // ssrManifest: true,
     // ssr: true,

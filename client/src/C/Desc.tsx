@@ -1,5 +1,6 @@
 import React from 'react';
-import { useSpring, animated } from 'react-spring';
+import { useSpring } from '@react-spring/core';
+import { animated } from '@react-spring/web';
 
 export default function Desc() {
   const spring = useSpring({
