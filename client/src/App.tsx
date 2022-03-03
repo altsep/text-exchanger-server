@@ -23,7 +23,6 @@ export interface exchangeEntry {
 export type exchangeT = [] | exchangeEntry[];
 
 export default function App() {
-  // prettier-ignore
   const [exchangeArr, setExchangeArr] = React.useState<exchangeEntry[]>([]);
   const [isAppLoaded, setIsAppLoaded] = React.useState<boolean>(false);
   const [userId, setUserId] = React.useState<string>('');
@@ -45,8 +44,7 @@ export default function App() {
       import('./F/gen-str')
         .then(({ genAlphanumStr }) => {
           const userToken = 'user-id=' + genAlphanumStr(32);
-          const attr =
-            ';max-age=2592000;secure;samesite=strict';
+          const attr = ';max-age=2592000;secure;samesite=strict';
           document.cookie = userToken + attr;
         })
         .catch((err) => console.log(err));

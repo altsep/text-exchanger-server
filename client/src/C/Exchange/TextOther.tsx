@@ -1,4 +1,3 @@
-import React from 'react';
 import { userTextPropsI } from './TextDefault';
 
 export default function TextOther(props: userTextPropsI) {
