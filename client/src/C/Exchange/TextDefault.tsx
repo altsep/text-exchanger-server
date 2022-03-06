@@ -3,22 +3,34 @@ import { themeT } from '../../ThemeContext';
 
 export interface userTextPropsI {
   isLoading: boolean;
-    isCreator: boolean;
-    textElementType: string;
-    creatorText: string;
-    guestText: string;
-    handleChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-    theme: themeT;
-  }
+  isCreator: boolean;
+  textElementType: string;
+  creatorText: string;
+  guestText: string;
+  handleChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  theme: themeT;
+}
 
 export default function TextDefault(props: userTextPropsI) {
-  const { isLoading, isCreator, textElementType, creatorText, guestText, handleChange, theme } = props;
+  const {
+    isLoading,
+    isCreator,
+    textElementType,
+    creatorText,
+    guestText,
+    handleChange,
+    theme,
+  } = props;
 
   const setTextAreaHeight = () => {
-    const el = document.querySelector('textarea');
+    const el = document.querySelector('textarea') as HTMLTextAreaElement;
     if (el) {
-      el.style.setProperty('height', 'auto');
-      el.style.setProperty('height', el.scrollHeight + 'px');
+      if (el.value.length === 0) {
+        el.style.height = '60px';
+      } else {
+        el.style.height = 'auto';
+        el.style.height = el.scrollHeight + 'px';
+      }
     }
   };
 
@@ -26,9 +38,6 @@ export default function TextDefault(props: userTextPropsI) {
     const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
     if (!isLoading && textarea) {
       setTextAreaHeight();
-      if (textarea.value.length === 0) {
-        textarea.style.setProperty('height', '60px');
-      }
       const valueLength = textarea.value.length * 2;
       textarea.selectionStart = valueLength;
     }
@@ -39,13 +48,13 @@ export default function TextDefault(props: userTextPropsI) {
     const textarea = document.querySelector('textarea');
     if (textarea) {
       textarea.addEventListener('input', setTextAreaHeight);
-      window.addEventListener('resize', setTextAreaHeight);
     }
+    window.addEventListener('resize', setTextAreaHeight);
     return () => {
       if (textarea) {
         textarea.removeEventListener('input', setTextAreaHeight);
-        window.removeEventListener('resize', setTextAreaHeight);
       }
+      window.removeEventListener('resize', setTextAreaHeight);
     };
   }, [isLoading]);
 

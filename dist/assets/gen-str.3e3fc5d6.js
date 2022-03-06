@@ -1,0 +1,1 @@
+function i(o=6){let e="",t="";for(let r=48;r<=57;r++)t+=String.fromCharCode(r);for(let r=65;r<=90;r++)t+=String.fromCharCode(r),t+=String.fromCharCode(r).toLowerCase();for(let r=0;r<o;r++){const n=Math.random()*t.length<<0;e+=t[n]}return e}function a(o=6){let e="";for(let t=0;t<o;t++)e+=(Math.random()*15<<0).toString(16);return e}export{i as genAlphanumStr,a as genHexStr};
