@@ -1,2 +1,2 @@
-export { default as Generate } from './ButtonGenerateUrl';
-export { default as DeleteCurrent } from './ButtonDeleteCurrent';
+export { default as Generate } from './GenerateUrl';
+export { default as DeleteCurrent } from './DeleteCurrent';

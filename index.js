@@ -6,6 +6,7 @@ const app = express();
 
 app.use(express.json({ limit: '128kb' }));
 app.use(express.text());
+app.use(express.urlencoded({ extended: true }));
 
 app.set('port', process.env.PORT || 3001);
 app.set('json spaces', 2);
@@ -16,73 +17,249 @@ app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
 
-app.use('/', express.static(path.resolve(__dirname, 'dist')));
+app.use('/', express.static('dist'));
 
 app
-  .route(/\w{6}/)
-  .get((req, res) =>
-    res.sendFile(path.resolve(__dirname, 'dist', 'index.html'))
-  );
+  .route(/^\/\w{6}$/)
+  .get((req, res) => res.sendFile(path.join(__dirname, 'dist', 'index.html')));
 
-const filesDir = 'files';
-const file = 'pages.json';
+const pageDir = 'pages';
+const creatorTextFileName = 'creator';
+const guestTextFileName = 'guest';
 
-let filesList;
-
-app.get('/api', (req, res) => {
-  let data;
-  readdirSync();
-  filesList.length > 0
-    ? (data = fs.readFileSync(path.join(__dirname, filesDir, file), 'utf8'))
-    : (data = '');
-  res.json({ message: 'Hello from server!', data });
+app.get('/api/:p', (req, res, next) => {
+  const { p } = req.params;
+  switch (p) {
+    case 'list':
+      fs.readdir(path.join(__dirname, pageDir), (err, pages) => {
+        if (err) {
+          next(err);
+        } else {
+          res.send(pages);
+        }
+      });
+      break;
+    // Used for debugging purposes
+    // case 'remove-all':
+    //   fs.readdir(pageDir, (err, files) => {
+    //     err
+    //       ? console.log(err)
+    //       : files.forEach((file) =>
+    //           fs.rm(
+    //             path.join(__dirname, pageDir, file),
+    //             { recursive: true },
+    //             (err) => err && console.log(err)
+    //           )
+    //         );
+    //     res.redirect('/');
+    //   });
+    //   break;
+    default:
+      res.status(404).send('Wrong API call');
+  }
 });
 
-app.post('/api', (req, res) => {
-  const data = JSON.stringify(req.body);
-  fs.writeFileSync(path.join(__dirname, filesDir, file), data);
-  const resData = JSON.parse(
-    fs.readFileSync(path.join(__dirname, filesDir, file), 'utf8')
-  );
-  res.json({
-    message: 'Wrote data!',
-  });
+app.post('/api/:p', (req, res, next) => {
+  const { p } = req.params;
+  switch (p) {
+    case 'new-page':
+      {
+        const { pageName, info } = req.body;
+        const newPageDirPath = path.join(__dirname, pageDir, pageName);
+        const files = ['info.json', creatorTextFileName, guestTextFileName];
+        fs.mkdir(newPageDirPath, { recursive: true }, (err) => {
+          if (err) {
+            next(err);
+            res.status(500).send("Couldn't create directory");
+          } else {
+            files.forEach((file) =>
+              fs.writeFile(
+                path.join(newPageDirPath, file),
+                file === 'info.json' ? JSON.stringify(info) : '',
+                (err) => {
+                  if (err) {
+                    next(err);
+                    res.status(500).send("Couldn't write file");
+                  }
+                }
+              )
+            );
+            res.send('Page added: ' + pageName);
+          }
+        });
+      }
+      break;
+    case 'list-created':
+      const userId = req.body;
+      fs.readdir(pageDir, (err, pages) => {
+        if (err) {
+          next(err);
+          res.status(500).send("Coudn't read directory");
+        } else {
+          const pagesCreated = [];
+          pages.forEach((pagePath) => {
+            const infoPath = path.join(
+              __dirname,
+              pageDir,
+              pagePath,
+              'info.json'
+            );
+            const exists = fs.existsSync(infoPath);
+            if (exists) {
+              const { creator, date } = JSON.parse(fs.readFileSync(infoPath));
+              if (creator === userId) {
+                pagesCreated.push({ pagePath, info: { creator, date } });
+              }
+            }
+          });
+          const r = pagesCreated
+            .slice()
+            .sort((a, b) => a.info.date - b.info.date)
+            .map((item) => item.pagePath);
+          res.send(r);
+        }
+      });
+      break;
+    case 'save-text':
+      {
+        const { pageName, isCreator, text } = req.body;
+        const filePath = path.join(
+          __dirname,
+          pageDir,
+          pageName,
+          isCreator ? creatorTextFileName : guestTextFileName
+        );
+        fs.writeFile(filePath, text, (err) => {
+          if (err) {
+            next(err);
+            res.send({ err: "Couldn't write file" });
+          }
+        });
+      }
+      break;
+    case 'remove-page':
+      {
+        const pagePath = req.body;
+        const pageDirPath = path.join(__dirname, pageDir, pagePath);
+        fs.rm(pageDirPath, { recursive: true }, (err) => {
+          if (err) {
+            next(err);
+          } else {
+            res.send('Page removed');
+          }
+        });
+      }
+      break;
+    case 'get-info':
+      {
+        const pagePath = req.body;
+        fs.readFile(
+          path.join(__dirname, pageDir, pagePath, 'info.json'),
+          { encoding: 'utf-8' },
+          (err, file) => {
+            if (err) {
+              next(err);
+              res
+                .status(500)
+                .send({ err: "Couldn't find data for current path" });
+            } else {
+              res.send(file);
+            }
+          }
+        );
+      }
+      break;
+    case 'update-info': {
+      const { pageName, info } = req.body;
+      fs.writeFile(
+        path.join(__dirname, pageDir, pageName, 'info.json'),
+        JSON.stringify(info),
+        (err) => {
+          if (err) {
+            next(err);
+            res.status(500).send("Couldn't write file");
+          }
+        }
+      );
+      break;
+    }
+    case 'get-text':
+      {
+        const pageName = req.body;
+        const files = [creatorTextFileName, guestTextFileName];
+        const [creatorData, guestData] = files.map((file) =>
+          fs.readFileSync(path.join(__dirname, pageDir, pageName, file), {
+            encoding: 'utf-8',
+          })
+        );
+        res.send({ creatorData, guestData });
+      }
+      break;
+    case 'get-text-other':
+      {
+        const { pageName, isCreator } = req.body;
+        fs.readFile(
+          path.join(
+            __dirname,
+            pageDir,
+            pageName,
+            isCreator ? guestTextFileName : creatorTextFileName
+          ),
+          { encoding: 'utf-8' },
+          (err, file) => {
+            if (err) {
+              next(err);
+              res.status(500).send({ err: "Couldn't find data" });
+            } else {
+              res.send(file);
+            }
+          }
+        );
+      }
+      break;
+    default:
+      res.status(404).send('Wrong API call');
+  }
 });
-
-function readdirSync() {
-  filesList = fs.readdirSync(filesDir);
-}
 
 const msInAWeek = 604800000;
 // const msInADay = 86400000;
-const msinAMinute = 60000;
+const msInAMinute = 60000;
 
 function clearOutdatedEntries() {
-  readdirSync();
-  if (filesList.length > 0) {
-    const data = fs.readFileSync(path.join(__dirname, filesDir, file), 'utf8');
-    if (data) {
-      const parsedData = JSON.parse(data);
+  fs.readdir(path.join(__dirname, pageDir), (err, pages) => {
+    if (err) {
+      console.log(err);
+    } else if (pages.length > 0) {
       const currentDate = Date.now();
-      const newData = parsedData.filter((a) => currentDate - a.date < msInAWeek);
-      const oldData = parsedData.filter((a) => currentDate - a.date > msInAWeek);
-      if (oldData.length > 0) {
-        fs.writeFile(
-          path.join(__dirname, filesDir, file),
-          JSON.stringify(newData),
-          (err) => {
-            if (err) console.log(err);
+      pages.forEach((page) => {
+        fs.readFile(
+          path.join(__dirname, pageDir, page, 'info.json'),
+          'utf-8',
+          (err, data) => {
+            if (err) {
+              next(err);
+            } else {
+              const { date } = JSON.parse(data);
+              if (currentDate - date > msInAWeek) {
+                fs.rm(
+                  path.join(__dirname, pageDir, page),
+                  { recursive: true },
+                  (err) => {
+                    if (err) {
+                      console.log(err);
+                    } else {
+                      console.log('Removed page', page, '(outdated)');
+                    }
+                  }
+                );
+              }
+            }
           }
         );
-        console.log(
-          'Cleared entries: ',
-          oldData.lenggth,
-          'Current entries: ',
-          parsedData.length
-        );
-      }
+      });
     }
-  }
+  });
 }
 
-setInterval(clearOutdatedEntries, msinAMinute);
+setInterval(clearOutdatedEntries, msInAMinute);

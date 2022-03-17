@@ -2,61 +2,57 @@ import React from 'react';
 import { themeT } from '../../ThemeContext';
 
 export interface userTextPropsI {
-  isLoading: boolean;
   isCreator: boolean;
   textElementType: string;
   creatorText: string;
   guestText: string;
   handleChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   theme: themeT;
+  gotText: boolean;
 }
 
 export default function TextDefault(props: userTextPropsI) {
   const {
-    isLoading,
     isCreator,
-    textElementType,
     creatorText,
     guestText,
     handleChange,
-    theme,
+    theme, gotText
   } = props;
 
   const setTextAreaHeight = () => {
-    const el = document.querySelector('textarea') as HTMLTextAreaElement;
-    if (el) {
-      if (el.value.length === 0) {
-        el.style.height = '60px';
+    const ta = document.querySelector('textarea') as HTMLTextAreaElement;
+    if (ta) {
+      if (ta.value.length === 0) {
+        ta.style.height = '60px';
       } else {
-        el.style.height = 'auto';
-        el.style.height = el.scrollHeight + 'px';
+        ta.style.height = 'auto';
+        ta.style.height = ta.scrollHeight + 'px';
       }
     }
   };
 
   React.useEffect(() => {
-    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
-    if (!isLoading && textarea) {
+    const ta = document.querySelector('textarea') as HTMLTextAreaElement;
+    if (ta) {
       setTextAreaHeight();
-      const valueLength = textarea.value.length * 2;
-      textarea.selectionStart = valueLength;
+      ta.selectionStart = ta.value.length;
     }
-  }, [isLoading, textElementType]);
+  }, [gotText]);
 
-  // Resize textarea on input or window resize
   React.useEffect(() => {
-    const textarea = document.querySelector('textarea');
-    if (textarea) {
-      textarea.addEventListener('input', setTextAreaHeight);
+    const ta = document.querySelector('textarea');
+    if (ta) {
+      ta.addEventListener('input', setTextAreaHeight);
     }
     window.addEventListener('resize', setTextAreaHeight);
     return () => {
-      if (textarea) {
-        textarea.removeEventListener('input', setTextAreaHeight);
+      if (ta) {
+        ta.removeEventListener('input', setTextAreaHeight);
       }
       window.removeEventListener('resize', setTextAreaHeight);
     };
-  }, [isLoading]);
+  }, [gotText]);
 
   return (
     <div className='flex flex-col items-center justify-center w-full'>
@@ -65,7 +61,7 @@ export default function TextDefault(props: userTextPropsI) {
         className={`${
           theme && theme.userText
         } shadow-inner shadow-black/25 placeholder:text-base placeholder:font-mono overflow-y-hidden resize-none focus:outline-none`}
-        placeholder='Enter text here...'
+        placeholder={gotText ? 'Enter text here...' : 'Getting data...'}
         value={isCreator ? creatorText : guestText}
         onChange={handleChange}
         autoFocus

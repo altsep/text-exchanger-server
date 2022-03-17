@@ -1,40 +1,50 @@
 import React from 'react';
-import { exchangeT } from '../App';
 import { Link } from 'react-router-dom';
 import { useThemeContext } from '../ThemeContext';
+import { PageList } from '../App';
 
 export default function UserPages(props: {
-  userId: string;
-  exchangeArr: exchangeT;
+  gotPages: boolean;
+  pagesCreated: PageList;
 }) {
-  const { userId, exchangeArr } = props;
+  const { gotPages, pagesCreated } = props;
   const { theme } = useThemeContext();
+  React.useEffect(() => {
+    const el = document.querySelector('.pages') as HTMLDivElement;
+    if (el) {
+      const { scrollHeight, clientHeight, style } = el;
+      if (scrollHeight > clientHeight) {
+        style.overflowY = 'scroll';
+      } else {
+        style.overflowY = 'auto';
+      }
+    }
+  }, [gotPages, pagesCreated]);
   return (
-    <>
-      {(() => {
-        const filteredExchangeArr = exchangeArr.filter(
-          (item) => item.creator === userId
-        );
-        return (
-          filteredExchangeArr.length > 0 && (
-            <div
-              className={`${
-                theme && theme.system
-              } flex flex-row flex-wrap max-w-3xl p-4`}
-            >
-              your pages:&nbsp;
-              {filteredExchangeArr.map((item) => (
-                <div key={`link to ${item.path}`}>
-                  <Link to={`/${item.path}`}>{item.path}</Link>
-                  {filteredExchangeArr.length > 1 &&
-                    filteredExchangeArr.indexOf(item) !==
-                      filteredExchangeArr.length - 1 && <>,&nbsp;</>}
-                </div>
-              ))}
-            </div>
-          )
-        );
-      })()}
-    </>
+    <div className='max-h-min'>
+      {!gotPages ? (
+        <p className={theme && theme.system}>Getting data...</p>
+      ) : pagesCreated.length > 0 ? (
+        <div
+          className={`pages ${
+            theme && theme.system
+          } flex flex-row flex-wrap max-w-lg max-h-32`}
+        >
+          <p>your pages:&nbsp;</p>
+          {pagesCreated.map((pagePath) => {
+            return (
+              <div key={`link to ${pagePath}`}>
+                <Link to={`/${pagePath}`}>{pagePath}</Link>
+                {pagesCreated.length > 1 &&
+                  pagesCreated.indexOf(pagePath) !==
+                    pagesCreated.length - 1 && <>,&nbsp;</>}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <>&nbsp;</>
+      )}
+    </div>
   );
 }

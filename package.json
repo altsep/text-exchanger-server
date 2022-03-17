@@ -1,12 +1,11 @@
 {
   "name": "text-exchanger",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "",
   "private": true,
   "license": "MIT",
-  "author": "Alexei Arushanov <coamnv@gmail.com> (https://altsep.vercel.app)",
+  "author": "Altsep <coamnv@gmail.com> (https://altsep.vercel.app)",
   "main": "index.js",
-  "type": "commonjs",
   "scripts": {
     "start": "nodemon .",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -22,12 +21,9 @@
     "nodemon": "^2.0.15"
   },
   "nodemonConfig": {
-    "ignore": [
-      ".git",
-      "node_modules/**/node_modules"
-    ],
+    "ignore": [],
     "watch": [
-      "./*"
+      "./index.js"
     ],
     "delay": 0,
     "ext": "js,json"

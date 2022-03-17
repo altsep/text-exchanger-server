@@ -21,8 +21,9 @@
   },
   "plugins": ["react", "@typescript-eslint", "json"],
   "rules": {
-    "quotes": ["error", "single", { "avoidEscape": false }],
-    "jsx-quotes": ["error", "prefer-single"]
+    "quotes": ["warn", "single", { "avoidEscape": false }],
+    "jsx-quotes": ["warn", "prefer-single"],
+    "no-empty": ["warn"]
   },
   "settings": {
     "react": {

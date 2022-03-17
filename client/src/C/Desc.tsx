@@ -17,7 +17,7 @@ export default function Desc() {
   }, [spring]);
   return (
     <animated.div
-      className='flex flex-col items-center w-full max-w-lg p-4'
+      className='flex flex-col items-center w-full max-w-lg'
       style={
         sessionStorage.getItem('descIsFaded') !== 'true' ? spring : undefined
       }
