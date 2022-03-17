@@ -14,4 +14,4 @@ Funnily enough, it wasn't my intent to end up with a messaging app prototype. Th
 
 ## Privacy disclaimer
 
-The data users post is not secure, and is accessible to anyone visiting the page. Be mindful of posting any sensitive information.
+Text data shared on a page by user is not secure, and is accessible to anyone visiting the page. Be mindful of posting any sensitive information.
