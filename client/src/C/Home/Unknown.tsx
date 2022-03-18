@@ -23,7 +23,7 @@ export default function Unknown(props: {
     p && setCurrentPath(p);
   }, []);
   const [currentPath, setCurrentPath] = React.useState<string>('');
-  
+
   React.useEffect(() => {
     const intervalId = setInterval(
       () => pageWasDeleted && setCount((prevState) => prevState - 1),
@@ -61,11 +61,12 @@ export default function Unknown(props: {
                   options
                 );
                 setLocalInfo({ creator, date: dateConverted });
+                const dateNow = Date.now();
                 updateInfo({
                   pageName: currentPath,
                   info: {
                     creator,
-                    date: Date.now(),
+                    date: dateNow,
                   },
                 });
                 if (creator !== userId) {

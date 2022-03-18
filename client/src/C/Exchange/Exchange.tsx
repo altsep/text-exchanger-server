@@ -58,12 +58,13 @@ export default function Exchange(props: exchangePropsI) {
           getTextOther({ pageName: currentPath, isCreator })
             .then((data) => {
               if (data) {
-                if (data.includes('"err": "Couldn\'t find data"')) {
-                  throw Error(JSON.parse(data).err);
+                const { err, text } = JSON.parse(data);
+                if (err) {
+                  throw Error(err);
                 } else if (isCreator) {
-                  data !== guestText && setGuestText(data);
+                  setGuestText(text);
                 } else {
-                  data !== creatorText && setCreatorText(data);
+                  setCreatorText(text);
                 }
               }
             })

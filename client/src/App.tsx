@@ -37,7 +37,7 @@ export default function App() {
             }
           })
         )
-        .catch((err) => console.error(err.message))
+        .catch((err) => console.warn(err.message))
         .finally(() => setGotPages(true));
     } else {
       import('./F/gen-str')
@@ -82,7 +82,6 @@ export default function App() {
               <Desc />
               <div className='flex flex-row flex-wrap justify-center'>
                 <Generate {...genBtnProps} />
-                {/* <Clear /> */}
               </div>
               {warning}
               <UserPages {...userPagesProps} />
