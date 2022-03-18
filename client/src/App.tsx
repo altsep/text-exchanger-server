@@ -27,17 +27,17 @@ export default function App() {
         .then(({ getCreatorPages }) =>
           getCreatorPages(id).then((data) => {
             if (data) {
+              setGotPages(true);
               const parsed = JSON.parse(data);
-              if (typeof parsed === 'object') {
-                setPagesCreated(parsed);
-                setGotPages(true);
+              if (parsed.err) {
+                throw Error(parsed.err);
               } else {
-                console.error(data);
+                setPagesCreated(parsed);
               }
             }
           })
         )
-        .catch((err) => console.log(err));
+        .catch((err) => console.error(err.message));
     } else {
       import('./F/gen-str')
         .then(({ genAlphanumStr }) => {

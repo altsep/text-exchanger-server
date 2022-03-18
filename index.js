@@ -23,7 +23,7 @@ app
   .route(/^\/\w{6}$/)
   .get((req, res) => res.sendFile(path.join(__dirname, 'dist', 'index.html')));
 
-const pageDir = 'pages';
+const pagesDirName = 'pages';
 const creatorTextFileName = 'creator';
 const guestTextFileName = 'guest';
 
@@ -31,7 +31,7 @@ app.get('/api/:p', (req, res, next) => {
   const { p } = req.params;
   switch (p) {
     case 'list':
-      fs.readdir(path.join(__dirname, pageDir), (err, pages) => {
+      fs.readdir(path.join(__dirname, pagesDirName), (err, pages) => {
         if (err) {
           next(err);
         } else {
@@ -62,10 +62,51 @@ app.get('/api/:p', (req, res, next) => {
 app.post('/api/:p', (req, res, next) => {
   const { p } = req.params;
   switch (p) {
+    case 'list-created':
+      const userId = req.body;
+      fs.readdir(path.join(__dirname, pagesDirName), (err, pages) => {
+        if (err) {
+          next(err);
+          res.status(500).send({ err: "Coudn't read directory" });
+          fs.mkdir(path.join(__dirname, pagesDirName), (err) => {
+            if (err) {
+              next(err);
+            } else {
+              console.log(`${pagesDirName} created in ${__dirname}`);
+            }
+          });
+        } else {
+          const pagesCreated = [];
+          pages.forEach((pagePath) => {
+            const infoPath = path.join(
+              __dirname,
+              pagesDirName,
+              pagePath,
+              'info.json'
+            );
+            const exists = fs.existsSync(infoPath);
+            if (exists) {
+              const file = fs.readFileSync(infoPath);
+              if (file.length > 0) {
+                const { creator, date } = JSON.parse(file);
+                if (creator === userId) {
+                  pagesCreated.push({ pagePath, info: { creator, date } });
+                }
+              }
+            }
+          });
+          const r = pagesCreated
+            .slice()
+            .sort((a, b) => a.info.date - b.info.date)
+            .map((item) => item.pagePath);
+          res.send(r);
+        }
+      });
+      break;
     case 'new-page':
       {
         const { pageName, info } = req.body;
-        const newPageDirPath = path.join(__dirname, pageDir, pageName);
+        const newPageDirPath = path.join(__dirname, pagesDirName, pageName);
         const files = ['info.json', creatorTextFileName, guestTextFileName];
         fs.mkdir(newPageDirPath, { recursive: true }, (err) => {
           if (err) {
@@ -89,43 +130,12 @@ app.post('/api/:p', (req, res, next) => {
         });
       }
       break;
-    case 'list-created':
-      const userId = req.body;
-      fs.readdir(pageDir, (err, pages) => {
-        if (err) {
-          next(err);
-          res.status(500).send("Coudn't read directory");
-        } else {
-          const pagesCreated = [];
-          pages.forEach((pagePath) => {
-            const infoPath = path.join(
-              __dirname,
-              pageDir,
-              pagePath,
-              'info.json'
-            );
-            const exists = fs.existsSync(infoPath);
-            if (exists) {
-              const { creator, date } = JSON.parse(fs.readFileSync(infoPath));
-              if (creator === userId) {
-                pagesCreated.push({ pagePath, info: { creator, date } });
-              }
-            }
-          });
-          const r = pagesCreated
-            .slice()
-            .sort((a, b) => a.info.date - b.info.date)
-            .map((item) => item.pagePath);
-          res.send(r);
-        }
-      });
-      break;
     case 'save-text':
       {
         const { pageName, isCreator, text } = req.body;
         const filePath = path.join(
           __dirname,
-          pageDir,
+          pagesDirName,
           pageName,
           isCreator ? creatorTextFileName : guestTextFileName
         );
@@ -140,7 +150,7 @@ app.post('/api/:p', (req, res, next) => {
     case 'remove-page':
       {
         const pagePath = req.body;
-        const pageDirPath = path.join(__dirname, pageDir, pagePath);
+        const pageDirPath = path.join(__dirname, pagesDirName, pagePath);
         fs.rm(pageDirPath, { recursive: true }, (err) => {
           if (err) {
             next(err);
@@ -154,7 +164,7 @@ app.post('/api/:p', (req, res, next) => {
       {
         const pagePath = req.body;
         fs.readFile(
-          path.join(__dirname, pageDir, pagePath, 'info.json'),
+          path.join(__dirname, pagesDirName, pagePath, 'info.json'),
           { encoding: 'utf-8' },
           (err, file) => {
             if (err) {
@@ -172,7 +182,7 @@ app.post('/api/:p', (req, res, next) => {
     case 'update-info': {
       const { pageName, info } = req.body;
       fs.writeFile(
-        path.join(__dirname, pageDir, pageName, 'info.json'),
+        path.join(__dirname, pagesDirName, pageName, 'info.json'),
         JSON.stringify(info),
         (err) => {
           if (err) {
@@ -188,7 +198,7 @@ app.post('/api/:p', (req, res, next) => {
         const pageName = req.body;
         const files = [creatorTextFileName, guestTextFileName];
         const [creatorData, guestData] = files.map((file) =>
-          fs.readFileSync(path.join(__dirname, pageDir, pageName, file), {
+          fs.readFileSync(path.join(__dirname, pagesDirName, pageName, file), {
             encoding: 'utf-8',
           })
         );
@@ -201,7 +211,7 @@ app.post('/api/:p', (req, res, next) => {
         fs.readFile(
           path.join(
             __dirname,
-            pageDir,
+            pagesDirName,
             pageName,
             isCreator ? guestTextFileName : creatorTextFileName
           ),
@@ -227,29 +237,40 @@ const msInAWeek = 604800000;
 const msInAMinute = 60000;
 
 function clearOutdatedEntries() {
-  fs.readdir(path.join(__dirname, pageDir), (err, pages) => {
+  fs.readdir(path.join(__dirname, pagesDirName), (err, pages) => {
     if (err) {
       console.log(err);
+      fs.mkdir(path.join(__dirname, pagesDirName), (err) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(`${pagesDirName} created in ${__dirname}`);
+        }
+      });
     } else if (pages.length > 0) {
       const currentDate = Date.now();
       pages.forEach((page) => {
         fs.readFile(
-          path.join(__dirname, pageDir, page, 'info.json'),
+          path.join(__dirname, pagesDirName, page, 'info.json'),
           'utf-8',
           (err, data) => {
             if (err) {
               next(err);
             } else {
               const { date } = JSON.parse(data);
-              if (currentDate - date > msInAWeek) {
+              if (!date || currentDate - date > msInAWeek) {
                 fs.rm(
-                  path.join(__dirname, pageDir, page),
+                  path.join(__dirname, pagesDirName, page),
                   { recursive: true },
                   (err) => {
                     if (err) {
                       console.log(err);
                     } else {
-                      console.log('Removed page', page, '(outdated)');
+                      console.log(
+                        'Removed page',
+                        page,
+                        date ? '(outdated)' : '(no data)'
+                      );
                     }
                   }
                 );

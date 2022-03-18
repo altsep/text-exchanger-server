@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useThemeContext } from '../ThemeContext';
-import { PageList } from '../App';
+import { useThemeContext } from '../../ThemeContext';
+import { PageList } from '../../App';
 
 export default function UserPages(props: {
   gotPages: boolean;

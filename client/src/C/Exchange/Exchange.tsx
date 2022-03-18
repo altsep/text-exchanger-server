@@ -1,9 +1,9 @@
 import React from 'react';
 import { PageList } from '../../App';
-import { Delete } from '..';
+import { RemovePage, Send, Select, Show } from './Buttons';
 import { useThemeContext } from '../../ThemeContext';
-import TextDefault from './TextDefault';
-import TextOther from './TextOther';
+import Area from './TextArea';
+import Other from './TextOther';
 import useWarning from '../../H/useWarning';
 
 interface exchangePropsI {
@@ -35,16 +35,6 @@ export default function Exchange(props: exchangePropsI) {
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
     isCreator ? setCreatorText(e.target.value) : setGuestText(e.target.value);
-
-  const handleSend = () => {
-    import('../../F/requests').then(({ sendText }) => {
-      sendText({
-        pageName: currentPath,
-        isCreator,
-        text: isCreator ? creatorText : guestText,
-      }).then((res) => res && setExists(false));
-    });
-  };
 
   React.useEffect(() => {
     import('../../F/requests').then(({ getText }) =>
@@ -87,30 +77,52 @@ export default function Exchange(props: exchangePropsI) {
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleTextElementType = () =>
-    textElementType === 'default'
-      ? setTextElementType('other')
-      : setTextElementType('default');
-
   const userTextProps = {
+    theme,
     isCreator,
     textElementType,
     creatorText,
     guestText,
     handleChange,
-    theme,
     gotText,
   };
 
   const deleteBtnProps = {
+    theme,
     currentPath,
     userId,
     setPageWasDeleted,
     setPagesCreated,
   };
 
+  const sendBtnProps = {
+    theme,
+    currentPath,
+    isCreator,
+    creatorText,
+    guestText,
+    setExists,
+  };
+
+  const selectBtnProps = {
+    theme,
+    isCreator,
+    creatorText,
+    guestText,
+    setCreatorText,
+    setGuestText,
+    gotText,
+  };
+
+  const showBtnProps = {
+    theme,
+    isCreator,
+    textElementType,
+    setTextElementType,
+  };
+
   const { warning, warningDisplay } = useWarning(
-    '! Information posted is not secure and accessible to anyone visiting the page. Be mindful of sending any sensitive data.',
+    '! Information posted is not secure and is accessible to anyone visiting the page. Be mindful of sending any sensitive data.',
     localStorage.getItem('exchangeWarningDisplay') || 'flex'
   );
 
@@ -118,96 +130,28 @@ export default function Exchange(props: exchangePropsI) {
     localStorage.setItem('exchangeWarningDisplay', warningDisplay);
   }, [warningDisplay]);
 
-  const [selectBtnText, setSelectBtnText] =
-    React.useState<string>('Select all');
-
-  React.useEffect(() => {
-    const onSelectionChange = () => {
-      const sel = window.getSelection();
-      if (sel) {
-        const selLength = sel.toString().length;
-        selLength > 0
-          ? setSelectBtnText('Delete selected')
-          : setSelectBtnText('Select all');
-      }
-    };
-    document.addEventListener('selectionchange', onSelectionChange);
-    return () => {
-      document.removeEventListener('selectionchange', onSelectionChange);
-    };
-  }, [gotText]);
-
   return (
     <>
       {document.cookie ? (
         <div className='flex flex-col items-center'>
           {warning}
-          <div className='flex flex-row flex-wrap justify-center mb-3'>
-            {textElementType === 'default' && (
-              <button
-                className={`${theme && theme.btn} flex flex-row items-center`}
-                onClick={handleSend}
-              >
-                <p>Send</p>&nbsp;
-                <p className='text-xs'>(128kb max)</p>
-              </button>
+          <div className='m-3 w-full'>
+            {textElementType === 'default' ? (
+              <Area {...userTextProps} />
+            ) : (
+              <Other {...userTextProps} />
             )}
-            {textElementType === 'default' &&
-              (isCreator ? creatorText.length > 0 : guestText.length > 0) && (
-                <button
-                  className={`${theme && theme.btn} ${
-                    creatorText.length === 0 && 'hidden'
-                  }`}
-                  onClick={() => {
-                    const ta = document.querySelector(
-                      'textarea'
-                    ) as HTMLTextAreaElement;
-                    const sel = window.getSelection();
-                    if (ta && sel && sel.toString().length > 0) {
-                      if (isCreator) {
-                        setCreatorText((prevState) =>
-                          prevState.replace(sel.toString(), '')
-                        );
-                      } else {
-                        setGuestText((prevState) =>
-                          prevState.replace(sel.toString(), '')
-                        );
-                      }
-                      ta.focus();
-                      setTimeout(() => {
-                        if (ta.value.length > 0) {
-                          ta.style.height = 'auto';
-                          ta.style.height = ta.scrollHeight + 'px';
-                        } else {
-                          ta.style.height = '60px';
-                        }
-                      }, 0);
-                    } else {
-                      ta.focus();
-                      ta.setSelectionRange(0, ta.value.length);
-                    }
-                  }}
-                >
-                  {selectBtnText}
-                </button>
-              )}
-            {isCreator && <Delete {...deleteBtnProps} />}
-            <button
-              className={theme && theme.btn}
-              onClick={handleTextElementType}
-            >
-              {textElementType === 'default'
-                ? isCreator
-                  ? 'Show guest\'s text'
-                  : 'Show creator\'s text'
-                : 'Show your text'}
-            </button>
           </div>
-          {textElementType === 'default' ? (
-            <TextDefault {...userTextProps} />
-          ) : (
-            <TextOther {...userTextProps} />
-          )}
+          <div className='flex flex-row flex-wrap justify-center'>
+            {textElementType === 'default' && (
+              <>
+                <Send {...sendBtnProps} />
+                <Select {...selectBtnProps} />
+              </>
+            )}
+            {isCreator && <RemovePage {...deleteBtnProps} />}
+            <Show {...showBtnProps} />
+          </div>
           <div
             className={`${
               theme && theme.system

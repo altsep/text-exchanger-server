@@ -1,6 +1,6 @@
 import React from 'react';
-import { themes } from '../styles';
-import { useThemeContext } from '../ThemeContext';
+import { themes } from '../../styles';
+import { useThemeContext } from '../../ThemeContext';
 
 export default function ThemeProvider() {
   const [isActive, setIsActive] = React.useState<boolean>(false);
@@ -13,7 +13,7 @@ export default function ThemeProvider() {
           <p
             key={item}
             onClick={() => {
-              import('../styles').then(({ defineTheme }) => defineTheme(item));
+              import('../../styles').then(({ defineTheme }) => defineTheme(item));
               setTheme(themes[item]);
               setIsActive(false);
             }}

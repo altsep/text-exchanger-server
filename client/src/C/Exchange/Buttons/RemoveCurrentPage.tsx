@@ -1,18 +1,18 @@
 import React from 'react';
-import { PageList } from '../../App';
-import { useThemeContext } from '../../ThemeContext';
+import { PageList } from '../../../App';
+import { themeI } from '../../../ThemeContext';
 
-export default function BtnDeleteCurrent(props: {
+export default function RemoveCurrentPage(props: {
+  theme: themeI;
   currentPath: string;
   userId: string;
   setPageWasDeleted: React.Dispatch<React.SetStateAction<boolean>>;
   setPagesCreated: React.Dispatch<React.SetStateAction<PageList>>;
 }) {
-  const { currentPath, userId, setPageWasDeleted, setPagesCreated } = props;
-  const { theme } = useThemeContext();
+  const { theme, currentPath, userId, setPageWasDeleted, setPagesCreated } = props;
 
   const handleClick = () => {
-    import('../../F/requests').then(({ removePage, getCreatorPages }) => {
+    import('../../../F/requests').then(({ removePage, getCreatorPages }) => {
       removePage(currentPath).then(() =>
         getCreatorPages(userId).then((data) => {
           if (data) {
@@ -25,7 +25,7 @@ export default function BtnDeleteCurrent(props: {
   };
 
   return (
-    <button className={theme && theme.btn} onClick={handleClick}>
+    <button className={theme.btn} onClick={handleClick}>
       Remove this page
     </button>
   );

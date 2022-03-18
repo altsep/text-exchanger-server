@@ -1,9 +1,9 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { PageList } from '../../App';
-import { useThemeContext } from '../../ThemeContext';
+import { PageList } from '../../../App';
+import { useThemeContext } from '../../../ThemeContext';
 
-export default function GenerateBtn(props: {
+export default function Generate(props: {
   pagesCreated: PageList;
   setPagesCreated: React.Dispatch<React.SetStateAction<PageList>>;
   setWarningDisplay: React.Dispatch<React.SetStateAction<string>>;
@@ -18,7 +18,7 @@ export default function GenerateBtn(props: {
     if (pagesCreated.length < 100) {
       setInnerText('Working...');
       const id = document.cookie.split('=')[1];
-      import('../../F/gen-str')
+      import('../../../F/gen-str')
         .then(({ genAlphanumStr }) => {
           const generatedString: string = genAlphanumStr();
           setNewPath(generatedString);
@@ -29,7 +29,7 @@ export default function GenerateBtn(props: {
               date: Date.now(),
             },
           };
-          import('../../F/requests')
+          import('../../../F/requests')
             .then(({ addPage }) => {
               addPage(body).then(() => {
                 // Wait for response before redirecting

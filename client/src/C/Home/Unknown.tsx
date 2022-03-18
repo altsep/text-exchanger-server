@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
-import { useThemeContext } from '../ThemeContext';
-import { Exchange } from './Exchange';
-import { PageList } from '../App';
+import { useThemeContext } from '../../ThemeContext';
+import { Exchange } from '../Exchange';
+import { PageList } from '../../App';
 
 interface info {
   creator: string;
@@ -23,6 +23,7 @@ export default function Unknown(props: {
     p && setCurrentPath(p);
   }, []);
   const [currentPath, setCurrentPath] = React.useState<string>('');
+  
   React.useEffect(() => {
     const intervalId = setInterval(
       () => pageWasDeleted && setCount((prevState) => prevState - 1),
@@ -41,7 +42,7 @@ export default function Unknown(props: {
 
   React.useEffect(() => {
     currentPath &&
-      import('../F/requests')
+      import('../../F/requests')
         .then(({ getInfo, updateInfo }) =>
           getInfo(currentPath).then((data) => {
             if (data) {
