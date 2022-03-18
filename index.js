@@ -67,7 +67,9 @@ app.post('/api/:p', (req, res, next) => {
       fs.readdir(path.join(__dirname, pagesDirName), (err, pages) => {
         if (err) {
           next(err);
-          res.status(500).send({ err: "Couldn't read directory, attempting to create one" });
+          res
+            .status(500)
+            .send({ err: "Couldn't read directory, attempting to create one" });
           fs.mkdir(path.join(__dirname, pagesDirName), (err) => {
             if (err) {
               next(err);
@@ -143,6 +145,8 @@ app.post('/api/:p', (req, res, next) => {
           if (err) {
             next(err);
             res.send({ err: "Couldn't write file" });
+          } else {
+            res.send({ message: 'Text saved' });
           }
         });
       }
@@ -188,6 +192,8 @@ app.post('/api/:p', (req, res, next) => {
           if (err) {
             next(err);
             res.status(500).send("Couldn't write file");
+          } else {
+            res.send('Info updated');
           }
         }
       );

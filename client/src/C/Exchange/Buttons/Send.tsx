@@ -9,14 +9,25 @@ export default function Send(props: {
   guestText: string;
   setExists: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { theme, currentPath, isCreator, creatorText, guestText, setExists } = props;
+  const { theme, currentPath, isCreator, creatorText, guestText, setExists } =
+    props;
   const handleSend = () => {
     import('../../../F/requests').then(({ sendText }) => {
       sendText({
         pageName: currentPath,
         isCreator,
         text: isCreator ? creatorText : guestText,
-      }).then((res) => res && setExists(false));
+      })
+        .then((data) => {
+          if (data) {
+            const { err } = JSON.parse(data);
+            if (err) {
+              setExists(false);
+              throw Error(err);
+            }
+          }
+        })
+        .catch((err) => console.error(err));
     });
   };
   return (
