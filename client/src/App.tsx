@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { Desc, Foot, Unknown, Generate, Themes, UserPages } from './C';
+import { Desc, Foot, Unknown, Themes, UserPages } from './C/Home';
+import { Generate } from './C/Home/Buttons';
 import useWarning from './H/useWarning';
 
 export type PageList = string[];
@@ -27,7 +28,6 @@ export default function App() {
         .then(({ getCreatorPages }) =>
           getCreatorPages(id).then((data) => {
             if (data) {
-              setGotPages(true);
               const parsed = JSON.parse(data);
               if (parsed.err) {
                 throw Error(parsed.err);
@@ -37,7 +37,8 @@ export default function App() {
             }
           })
         )
-        .catch((err) => console.error(err.message));
+        .catch((err) => console.error(err.message))
+        .finally(() => setGotPages(true));
     } else {
       import('./F/gen-str')
         .then(({ genAlphanumStr }) => {
@@ -47,7 +48,8 @@ export default function App() {
           document.cookie = userToken + attr;
           setUserId(rndStr);
         })
-        .catch((err) => console.error(err));
+        .catch((err) => console.error(err))
+        .finally(() => setGotPages(true));
     }
   }, []);
 
@@ -80,22 +82,7 @@ export default function App() {
               <Desc />
               <div className='flex flex-row flex-wrap justify-center'>
                 <Generate {...genBtnProps} />
-                {/* <button
-                  className={theme && theme.btn}
-                  onClick={() => {
-                    fetch('/api/remove-all').then(() => {
-                      import('./F/requests').then(({ getCreatorPages }) =>
-                        getCreatorPages(userId).then((data) => {
-                          if (data) {
-                            setPagesCreated(JSON.parse(data));
-                          }
-                        })
-                      );
-                    });
-                  }}
-                >
-                  Clear
-                </button> */}
+                {/* <Clear /> */}
               </div>
               {warning}
               <UserPages {...userPagesProps} />
