@@ -2,7 +2,7 @@
   "name": "text-exchanger-client",
   "version": "0.3.2",
   "private": true,
-  "license": "MIT",
+  "license": ["MIT"],
   "author": "Altsep <coamnv@gmail.com> (https://altsep.vercel.app)",
   "dependencies": {
     "@react-spring/core": "^9.4.3",

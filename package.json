@@ -2,9 +2,6 @@
   "name": "text-exchanger",
   "version": "1.0.2",
   "description": "",
-  "private": true,
-  "license": "MIT",
-  "author": "Altsep <coamnv@gmail.com> (https://altsep.vercel.app)",
   "main": "index.js",
   "scripts": {
     "start": "nodemon .",
@@ -28,5 +25,8 @@
     "delay": 0,
     "ext": "js,json"
   },
+  "license": "MIT",
+  "author": "Altsep <coamnv@gmail.com> (https://altsep.vercel.app)",
+  "private": true,
   "packageManager": "pnpm@6.32.2"
 }

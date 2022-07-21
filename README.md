@@ -6,14 +6,6 @@ Express-based server and React client built in Vite dev environment. The app all
 
 Funnily enough, it wasn't my intent to end up with a messaging app prototype. The idea was to make the exchange closer to a game one could play with a friend, where one cannot see what the other person wants them to read before they revealed it with a click, while making it more readable than the average messaging or text storage app, closer to typographic experience, so that people could enjoy their time.
 
-## To-do
-
-- Listen for change in files instead of getting data on interval
-- Use dynamic imports instead of fetch, since data is saved locally in the first place
-- Font size / family options
-- Break long text on separate sections and allow to switch between them
-- Accessibility
-
 ## Privacy disclaimer
 
 Text data shared on a page is not secure, and is accessible to anyone visiting the page. Be mindful of posting any sensitive information.
