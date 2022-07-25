@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon .",
+    "start": "node .",
+    "dev": "nodemon .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
@@ -12,6 +13,7 @@
   },
   "keywords": [],
   "dependencies": {
+    "compression": "^1.7.4",
     "express": "^4.17.2"
   },
   "devDependencies": {
@@ -27,6 +29,5 @@
   },
   "license": "MIT",
   "author": "Altsep <coamnv@gmail.com> (https://altsep.vercel.app)",
-  "private": true,
-  "packageManager": "pnpm@6.32.2"
+  "private": true
 }

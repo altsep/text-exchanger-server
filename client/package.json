@@ -1,9 +1,6 @@
 {
   "name": "text-exchanger-client",
   "version": "0.3.2",
-  "private": true,
-  "license": ["MIT"],
-  "author": "Altsep <coamnv@gmail.com> (https://altsep.vercel.app)",
   "dependencies": {
     "@react-spring/core": "^9.4.3",
     "@react-spring/web": "^9.4.3",
@@ -61,5 +58,7 @@
     "vite": "^2.8.6",
     "vite-tsconfig-paths": "^3.4.0"
   },
-  "packageManager": "pnpm@6.11.0"
+  "private": true,
+  "license": "MIT",
+  "author": "Altsep <coamnv@gmail.com> (https://altsep.vercel.app)"
 }
