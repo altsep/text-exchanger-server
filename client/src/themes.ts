@@ -14,7 +14,7 @@ const anchorStyle = 'underline hovered:no-underline';
 const userTextStyle =
   'items-center justify-center text-lg w-full max-w-5xl resize-none my-3 p-4';
 const dropdownStyle =
-  'text-base font-mono cursor-pointer children:py-2 children:px-4 lg:children:py-0 lg:children:px-1 text-right';
+  'text-base font-mono cursor-pointer children:py-2 children:px-4 text-right';
 const systemStyle = 'text-base font-mono';
 
 export const themes: themesI = {
