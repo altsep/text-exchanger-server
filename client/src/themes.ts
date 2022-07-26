@@ -5,7 +5,7 @@ interface themesI {
     anchor: string;
     userText: string;
     system: string;
-    dropdown: string;
+    themeMenu: string;
   };
 }
 
@@ -24,7 +24,7 @@ export const themes: themesI = {
     anchor: `text-gray-600 visited:text-amber-800 ${anchorStyle}`,
     userText: `bg-gray-100 border-gray-600 ${userTextStyle}`,
     system: `text-gray-400 ${systemStyle}`,
-    dropdown: `text-gray-400 children:bg-gray-50 hover:children:bg-gray-200 ${dropdownStyle}`,
+    themeMenu: `text-gray-400 children:bg-gray-50 hover:children:bg-gray-200 ${dropdownStyle}`,
   },
   'white on gray': {
     default: 'text-gray-50 bg-gray-500 text-2xl',
@@ -32,7 +32,7 @@ export const themes: themesI = {
     anchor: `text-gray-400 visited:text-amber-600 ${anchorStyle}`,
     userText: `placeholder:text-gray-300 bg-gray-400 border-gray-600 ${userTextStyle}`,
     system: `text-gray-300 ${systemStyle}`,
-    dropdown: `text-gray-300 children:bg-gray-500 hover:children:bg-gray-50 ${dropdownStyle}`,
+    themeMenu: `text-gray-300 children:bg-gray-500 hover:children:bg-gray-50 ${dropdownStyle}`,
   },
   'amber on blue': {
     default: 'text-amber-300 bg-blue-900 text-2xl',
@@ -40,7 +40,7 @@ export const themes: themesI = {
     anchor: `text-amber-600 visited:text-amber-800 ${anchorStyle}`,
     userText: `bg-blue-300/10 border-amber-800 ${userTextStyle}`,
     system: `text-gray-400 ${systemStyle}`,
-    dropdown: `text-gray-400 children:bg-blue-900 hover:children:bg-amber-300 ${dropdownStyle}`,
+    themeMenu: `text-gray-400 children:bg-blue-900 hover:children:bg-amber-300 ${dropdownStyle}`,
   },
 };
 

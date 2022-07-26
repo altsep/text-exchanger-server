@@ -1,5 +1,5 @@
 import React from 'react';
-import { themes } from './styles';
+import { themes } from './themes';
 
 export interface themeI {
   default: string;
@@ -7,7 +7,7 @@ export interface themeI {
   anchor: string;
   userText: string;
   system: string;
-  dropdown: string;
+  themeMenu: string;
 }
 
 export type themeT = themeI;
@@ -24,7 +24,7 @@ function ThemeProvider(props: { children: JSX.Element | JSX.Element[] }) {
     anchor: '',
     userText: '',
     system: '',
-    dropdown: '',
+    themeMenu: '',
   });
   React.useEffect(() => {
     const storageItem: string | null = localStorage.getItem('theme');

@@ -1,5 +1,5 @@
 import React from 'react';
-import { themes } from '../../styles';
+import { themes } from '../../themes';
 import { useThemeContext } from '../../ThemeContext';
 
 export default function ThemeProvider() {
@@ -7,13 +7,13 @@ export default function ThemeProvider() {
   const { theme, setTheme } = useThemeContext();
   const themeList = Object.keys(themes);
   return (
-    <div className={`${theme && theme.dropdown} absolute top-0 right-0 z-10`}>
+    <div className={`${theme && theme.themeMenu} absolute top-0 right-0 z-10`}>
       {isActive ? (
         themeList.map((item) => (
           <p
             key={item}
             onClick={() => {
-              import('../../styles').then(({ defineTheme }) => defineTheme(item));
+              import('../../themes').then(({ defineTheme }) => defineTheme(item));
               setTheme(themes[item]);
               setIsActive(false);
             }}
