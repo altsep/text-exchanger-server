@@ -20,10 +20,15 @@ export default function Select(props: {
     gotText,
   } = props;
 
-  const handleClick = () => {
+  const getSelection = (el: HTMLTextAreaElement) => {
+    const { selectionStart, selectionEnd } = el;
+    return el.textContent?.slice(selectionStart, selectionEnd);
+  };
+
+  const handleClick = function () {
     const ta = document.querySelector('textarea') as HTMLTextAreaElement;
-    const sel = window.getSelection();
-    if (ta && sel && sel.toString().length > 0) {
+    const sel = getSelection(ta);
+    if (ta && sel) {
       if (isCreator) {
         setCreatorText((prevState) => prevState.replace(sel.toString(), ''));
       } else {
@@ -49,13 +54,10 @@ export default function Select(props: {
 
   React.useEffect(() => {
     const onSelectionChange = () => {
-      const sel = window.getSelection();
-      if (sel) {
-        const selLength = sel.toString().length;
-        selLength > 0
-          ? setSelectBtnText('Delete selected')
-          : setSelectBtnText('Select all');
-      }
+      const ta = document.querySelector('textarea') as HTMLTextAreaElement;
+      const sel = getSelection(ta);
+      if (sel) setSelectBtnText('Delete selected');
+      else setSelectBtnText('Select all');
     };
     document.addEventListener('selectionchange', onSelectionChange);
     return () => {
