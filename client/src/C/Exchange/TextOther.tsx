@@ -1,4 +1,3 @@
-import React from 'react';
 import { userTextPropsI } from './TextArea';
 
 export default function TextOther(props: userTextPropsI) {
