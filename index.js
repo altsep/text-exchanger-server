@@ -2,24 +2,71 @@ const compression = require('compression');
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const portfinder = require('portfinder');
+const expressWs = require('express-ws');
+const initRequests = require('./requests');
 
 const app = express();
+
+expressWs(app);
+
+portfinder.getPort(
+  {
+    port: 3001,
+    stopPort: 9000,
+  },
+  (err, port) => {
+    if (err) throw err;
+    const PORT = process.env.PORT || port;
+    app.listen(PORT, () => {
+      console.log(`Server listening on ${PORT}`);
+    });
+  }
+);
 
 app.use(compression());
 app.use(express.json({ limit: '128kb' }));
 app.use(express.text());
 app.use(express.urlencoded({ extended: true }));
 
-app.set('port', process.env.PORT || 3001);
 app.set('json spaces', 2);
 
-const PORT = app.get('port');
-
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
-});
-
 app.use('/', express.static('dist'));
+
+app.ws('/', (ws, req) => {
+  const { sendFormatted, saveText, getTextOther, getText } = initRequests(
+    ws,
+    creatorTextFileName,
+    guestTextFileName,
+    pagesDirName
+  );
+
+  ws.on('message', (message) => {
+    const { type, payload } = JSON.parse(message);
+    switch (type) {
+      case 'save-text':
+        saveText(payload);
+        break;
+      case 'get-text':
+        getText(payload);
+        break;
+      case 'get-text-other':
+        getTextOther(payload);
+        break;
+      default:
+        return;
+    }
+    // Used for debugging
+    // sendFormatted('system', 'Connected to WebSocket server');
+    // console.log('received: %s', message);
+    // sendFormatted('system', `You sent the following: "${message}"`);
+  });
+
+  ws.on('error', (err) => {
+    sendFormatted('error', { message: err });
+    next(err);
+  });
+});
 
 app
   .route(/^\/\w{6}$/)
@@ -41,7 +88,7 @@ app.get('/api/:p', (req, res, next) => {
         }
       });
       break;
-    // Used for debugging purposes
+    // Used for debugging
     // case 'remove-all':
     //   fs.readdir(pageDir, (err, files) => {
     //     err
@@ -177,7 +224,7 @@ app.post('/api/:p', (req, res, next) => {
               next(err);
               res
                 .status(500)
-                .send({ err: "Couldn't find data for current path" });
+                .send({ err: "Couldn't find data for the current path" });
             } else {
               res.send(file);
             }

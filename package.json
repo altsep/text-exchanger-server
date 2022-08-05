@@ -14,7 +14,9 @@
   "keywords": [],
   "dependencies": {
     "compression": "^1.7.4",
-    "express": "^4.17.2"
+    "express": "^4.17.2",
+    "express-ws": "^5.0.2",
+    "portfinder": "^1.0.28"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
@@ -22,10 +24,10 @@
   "nodemonConfig": {
     "ignore": [],
     "watch": [
-      "./index.js"
+      "./"
     ],
     "delay": 0,
-    "ext": "js,json"
+    "ext": "js"
   },
   "license": "MIT",
   "author": "Altsep <coamnv@gmail.com> (https://altsep.vercel.app)",
