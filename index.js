@@ -243,6 +243,7 @@ app.post('/api/:p', (req, res, next) => {
 const msInAWeek = 604800000;
 // const msInADay = 86400000;
 const msInAMinute = 60000;
+// const msInTwoSeconds = 2000;
 
 function clearOutdatedEntries() {
   fs.readdir(path.join(__dirname, pagesDirName), (err, pages) => {
@@ -262,27 +263,24 @@ function clearOutdatedEntries() {
           path.join(__dirname, pagesDirName, page, 'info.json'),
           'utf-8',
           (err, data) => {
-            if (err) {
-              next(err);
-            } else {
-              const { date } = JSON.parse(data);
-              if (!date || currentDate - date > msInAWeek) {
-                fs.rm(
-                  path.join(__dirname, pagesDirName, page),
-                  { recursive: true },
-                  (err) => {
-                    if (err) {
-                      console.log(err);
-                    } else {
-                      console.log(
-                        'Removed page',
-                        page,
-                        date ? '(outdated)' : '(no data)'
-                      );
-                    }
-                  }
-                );
-              }
+            if (err) console.log(err);
+            const removePage = (message) => {
+              fs.rm(
+                path.join(__dirname, pagesDirName, page),
+                { recursive: true },
+                (err) => {
+                  if (err) console.log(err);
+                  else console.log(`Removed page ${page}: ${message || ''}`);
+                }
+              );
+            };
+            try {
+              const { creator, date } = JSON.parse(data);
+              if (!creator || !date) removePage('Missing property');
+              else if (currentDate - date > msInAWeek)
+                removePage("Page hasn't been active for over a week");
+            } catch (e) {
+              removePage(e.message);
             }
           }
         );
