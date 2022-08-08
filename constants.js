@@ -6,5 +6,4 @@ module.exports = {
   msInAWeek: 604800000,
   msInADay: 86400000,
   msInAMinute: 60000,
-  msInTwoSeconds: 2000,
 };

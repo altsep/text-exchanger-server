@@ -31,7 +31,7 @@ app.set('json spaces', 2);
 
 app.use('/', express.static('dist'));
 
-const initRequestsWs = require('./requests-ws');
+const initRequestsWs = require('./requests/ws');
 
 app.ws('/', (ws, req) => {
   const requestsWs = initRequestsWs(ws);
@@ -56,7 +56,7 @@ app
   .route(/^\/\w{6}$/)
   .get((req, res) => res.sendFile(path.join(__dirname, 'dist', 'index.html')));
 
-const requests = require('./requests');
+const requests = require('./requests/api');
 
 app.get('/api/:param', (req, res, next) => {
   const { param } = req.params;
