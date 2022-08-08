@@ -61,16 +61,14 @@ const requests = require('./requests/api');
 app.get('/api/:param', (req, res, next) => {
   const { param } = req.params;
   if (requests.hasOwnProperty(param)) {
-    const method = requests[param];
-    method(req, res);
+    requests[param](req, res, next);
   } else res.status(404).send({ err: 'Wrong API call' });
 });
 
 app.post('/api/:param', (req, res, next) => {
   const { param } = req.params;
   if (requests.hasOwnProperty(param)) {
-    const method = requests[param];
-    method(req, res, next);
+    requests[param](req, res, next);
   } else res.status(404).send({ err: 'Wrong API call' });
 });
 
