@@ -9,13 +9,12 @@ module.exports = function listCreated(req, res, next) {
       next(err);
       res
         .status(500)
-        .send({ err: "Couldn't read directory, attempting to create one" });
+        .send({
+          err: "Couldn't read the pages directory, attempting to create one",
+        });
       fs.mkdir(path.join(__basedir, pagesDirName), (err) => {
-        if (err) {
-          next(err);
-        } else {
-          console.log(`${pagesDirName} created in ${__basedir}`);
-        }
+        if (err) next(err);
+        else console.log(`${pagesDirName} created in ${__basedir}`);
       });
     } else {
       const pagesCreated = [];
