@@ -1,0 +1,8 @@
+node_modules
+build
+dist
+*.cjs
+*.config.js
+*setup.js
+**/*.md
+src/views

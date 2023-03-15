@@ -1,7 +1,7 @@
-const fs = require('fs');
-const getOwnFilePath = require('./getOwnFilePath');
+import fs = require('fs');
+import getOwnFilePath = require('./getOwnFilePath');
 
-module.exports = function saveText(data) {
+export = function saveText(data): void {
   const { pageName, isCreator, text } = data;
   const filePath = getOwnFilePath(pageName, isCreator);
   fs.writeFile(filePath, text, (err) => {
