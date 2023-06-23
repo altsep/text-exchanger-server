@@ -8,4 +8,4 @@ Funnily enough, it wasn't my intent to end up with a messaging app prototype. Th
 
 ## Privacy disclaimer
 
-Text data shared on a generated page is accessible to anyone visiting the url. Be mindful of posting any sensitive information.
+Anyone who visits the URL can view the text data shared on a generated page. Be cautious when posting any sensitive information.
