@@ -51,6 +51,14 @@ module.exports = {
           2,
           { accessibility: 'explicit', overrides: { constructors: 'no-public' } },
         ],
+        '@typescript-eslint/explicit-function-return-type': 2,
+        '@typescript-eslint/explicit-member-accessibility': [
+          2,
+          {
+            accessibility: 'explicit',
+            overrides: { constructors: 'no-public' },
+          },
+        ],
       },
     },
   ],

@@ -1,9 +1,7 @@
 /* eslint-disable no-await-in-loop */
-import fsPromises = require('fs/promises');
-import path = require('path');
-import constants = require('../constants');
-
-const { basedir, pagesDirName, msInAWeek } = constants;
+import fsPromises from 'fs/promises';
+import path from 'path';
+import { basedir, pagesDirName, msInAWeek } from '../constants';
 
 async function makeDir(...pathArgs: string[]): Promise<void> {
   try {
@@ -25,7 +23,7 @@ async function removeDir(message: string, ...pathArgs: string[]): Promise<void> 
   }
 }
 
-export = async function clearOutdatedEntries(): Promise<void> {
+export async function clearOutdatedEntries(): Promise<void> {
   try {
     const pages = await fsPromises.readdir(path.join(basedir, pagesDirName));
     if (pages.length > 0) {
@@ -50,4 +48,4 @@ export = async function clearOutdatedEntries(): Promise<void> {
     console.log('Attempting to create a pages directory...');
     await makeDir(basedir, pagesDirName);
   }
-};
+}

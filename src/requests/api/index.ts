@@ -1,6 +1,5 @@
-const {
+import {
   listAllPages,
-  removeAllPages,
   listCreated,
   newPage,
   removePage,
@@ -9,17 +8,28 @@ const {
   getTextOther,
   saveText,
   updateInfo,
-} = require('./methods');
+} from './handlers';
 
-module.exports = {
-  list: listAllPages,
-  // 'remove-all': removeAllPages,
-  'list-created': listCreated,
-  'new-page': newPage,
-  'save-text': saveText,
-  'remove-page': removePage,
-  'get-info': getInfo,
-  'update-info': updateInfo,
-  'get-text': getText,
-  'other-text': getTextOther,
-};
+class Requests {
+  public list = listAllPages;
+
+  public 'list-created' = listCreated;
+
+  public 'new-page' = newPage;
+
+  public 'save-text' = saveText;
+
+  public 'remove-page' = removePage;
+
+  public 'get-info' = getInfo;
+
+  public 'update-info' = updateInfo;
+
+  public 'get-text' = getText;
+
+  public 'other-text' = getTextOther;
+}
+
+const requests = new Requests();
+
+export { requests };
