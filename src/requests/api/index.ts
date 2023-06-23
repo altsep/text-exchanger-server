@@ -1,35 +1,25 @@
 import {
+  getInfo,
+  getText,
+  getTextOther,
   listAllPages,
   listCreated,
   newPage,
   removePage,
-  getInfo,
-  getText,
-  getTextOther,
   saveText,
   updateInfo,
 } from './handlers';
 
-class Requests {
-  public list = listAllPages;
-
-  public 'list-created' = listCreated;
-
-  public 'new-page' = newPage;
-
-  public 'save-text' = saveText;
-
-  public 'remove-page' = removePage;
-
-  public 'get-info' = getInfo;
-
-  public 'update-info' = updateInfo;
-
-  public 'get-text' = getText;
-
-  public 'other-text' = getTextOther;
-}
-
-const requests = new Requests();
+const requests = {
+  list: listAllPages,
+  'list-created': listCreated,
+  'new-page': newPage,
+  'save-text': saveText,
+  'remove-page': removePage,
+  'get-info': getInfo,
+  'update-info': updateInfo,
+  'get-text': getText,
+  'other-text': getTextOther,
+};
 
 export { requests };
