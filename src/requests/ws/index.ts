@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import * as WebSocket from 'ws';
+import { basedir, creatorTextFileName, guestTextFileName, pagesDirName } from '../../constants';
 import { Text } from '../../types';
-import { basedir, pagesDirName, creatorTextFileName, guestTextFileName } from '../../constants';
 
 class RequestsWs {
   constructor(private ws: WebSocket) {}
@@ -27,7 +27,7 @@ class RequestsWs {
     const { pageName } = data;
     const files = [creatorTextFileName, guestTextFileName];
     const [creatorData, guestData] = files.map((file) =>
-      fs.readFileSync(path.join(basedir, pagesDirName, pageName, file), {
+      fs.readFileSync(path.resolve(basedir, '../', pagesDirName, pageName, file), {
         encoding: 'utf-8',
       })
     );
@@ -60,11 +60,11 @@ class RequestsWs {
   };
 
   private static getOtherFilePath = ({ pageName, isCreator }: Text): string => {
-    return path.join(basedir, pagesDirName, pageName, isCreator ? guestTextFileName : creatorTextFileName);
+    return path.resolve(basedir, '../', pagesDirName, pageName, isCreator ? guestTextFileName : creatorTextFileName);
   };
 
   private static getOwnFilePath = ({ pageName, isCreator }: Text): string => {
-    return path.join(basedir, pagesDirName, pageName, isCreator ? creatorTextFileName : guestTextFileName);
+    return path.resolve(basedir, '../', pagesDirName, pageName, isCreator ? creatorTextFileName : guestTextFileName);
   };
 }
 

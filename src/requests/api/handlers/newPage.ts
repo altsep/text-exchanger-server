@@ -6,7 +6,7 @@ import { Page } from '../../../types';
 
 export const newPage: RequestHandler = (req, res, next): void => {
   const { pageName, info } = req.body as Page;
-  const newPageDirPath = path.join(basedir, pagesDirName, pageName);
+  const newPageDirPath = path.resolve(basedir, '../', pagesDirName, pageName);
   const files = ['info.json', creatorTextFileName, guestTextFileName];
   fs.mkdir(newPageDirPath, { recursive: true }, (err) => {
     if (err) {

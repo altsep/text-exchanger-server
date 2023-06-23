@@ -6,20 +6,20 @@ import { Info, Page } from '../../../types';
 
 export const listCreated: RequestHandler = (req, res, next): void => {
   const userId = req.body as string;
-  fs.readdir(path.join(basedir, pagesDirName), (err, pages) => {
+  fs.readdir(path.resolve(basedir, '../', pagesDirName), (err, pages) => {
     if (err) {
       next(err);
       res.status(500).send({
         err: "Couldn't read the pages directory, attempting to create one",
       });
-      fs.mkdir(path.join(basedir, pagesDirName), (error) => {
+      fs.mkdir(path.resolve(basedir, '../', pagesDirName), (error) => {
         if (error) next(error);
         else console.log(`${pagesDirName} created in ${basedir}`);
       });
     } else {
       const pagesCreated: Page[] = [];
       pages.forEach((pageName) => {
-        const infoPath = path.join(basedir, pagesDirName, pageName, 'info.json');
+        const infoPath = path.resolve(basedir, '../', pagesDirName, pageName, 'info.json');
         const exists = fs.existsSync(infoPath);
         if (exists) {
           const file = fs.readFileSync(infoPath, 'utf-8');

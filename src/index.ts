@@ -1,14 +1,14 @@
-import path from 'path';
 import compression from 'compression';
 import express from 'express';
 import expressWs from 'express-ws';
 import morgan from 'morgan';
+import path from 'path';
 import portfinder from 'portfinder';
 import { msInAMinute } from './constants';
-import { clearOutdatedEntries } from './util';
 import { requests } from './requests/api';
 import { initRequestsWs } from './requests/ws';
 import { Text } from './types';
+import { clearOutdatedEntries } from './util';
 
 const { app } = expressWs(express());
 
@@ -58,7 +58,7 @@ app.ws('/', (ws, _req, next) => {
   });
 });
 
-app.route(/^\/\w{6}$/).get((_req, res) => res.sendFile(path.join(__dirname, 'dist', 'index.html')));
+app.route(/^\/\w{6}$/).get((_req, res) => res.sendFile(path.resolve(__dirname, '../', 'dist', 'index.html')));
 
 app.get('/api/:param', (req, res, next) => {
   const param = req.params.param as keyof typeof requests;
