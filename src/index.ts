@@ -70,7 +70,8 @@ app.get('/api/:param', (req, res, next) => {
 app.post('/api/:param', (req, res, next) => {
   const param = req.params.param as keyof typeof requests;
   if (requests[param] != null) {
-    requests[param](req, res, next);
+    const handler = requests[param];
+    handler(req, res, next);
   } else res.status(404).send({ err: 'Wrong API call' });
 });
 

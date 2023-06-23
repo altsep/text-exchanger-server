@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import WebSocket from 'ws';
+import * as WebSocket from 'ws';
 import { Text } from '../../types';
 import { basedir, pagesDirName, creatorTextFileName, guestTextFileName } from '../../constants';
 
@@ -8,9 +8,7 @@ class RequestsWs {
   constructor(private ws: WebSocket) {}
 
   public sendFormatted(type: string, payload: unknown): void {
-    if ('ws' in this && this.ws instanceof WebSocket) {
-      this.ws.send(JSON.stringify({ type, payload }));
-    }
+    this.ws.send(JSON.stringify({ type, payload }));
   }
 
   public 'save-text' = (data: Text): void => {
